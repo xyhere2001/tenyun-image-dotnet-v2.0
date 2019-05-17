@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>qcloud.image</RootNamespace>
+    <AssemblyName>qcloud.image</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AbstractImageHttpClient .cs" />
+  </ItemGroup>
+
+</Project>
