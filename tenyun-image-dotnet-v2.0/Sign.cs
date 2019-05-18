@@ -18,7 +18,6 @@ namespace qcloud.image
  * @param expired
  *            超时时间
  * @return 返回base64编码的字符串
- * @throws AbstractImageException  异常
  */
         public static String appSign(Credentials cred, String bucketName, long expired)
         {
@@ -26,16 +25,16 @@ namespace qcloud.image
             String secretId = cred.getSecretId();
             String secretKey = cred.getSecretKey();
 
-            return appSign(appId, secretId, secretKey, expired);
+            return appSign(appId, secretId, secretKey, expired, bucketName);
         }
 
 
         public static string appSign(string appId, string secretId, string secretKey, long expired = 300, string bucketName = "")
         {
-            long now = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;//System.currentTimeMillis() / 1000;
+            long now = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             int rdm = new Random().Next();
-            string plainText = String.Format("a={0}&b={1}&k={2}&t={3}&e={4}&r={5}", appId, bucketName,
-                    secretId, now, now + expired, rdm);
+            string plainText = String.Format("a={0}&b={1}&k={2}&e={3}&t={4}&r={5}&f={6}", appId, bucketName,
+                    secretId, now + expired, now, rdm, "");
             byte[] hmacDigest = HmacSha1(plainText, secretKey);
             byte[] originalBytes = System.Text.Encoding.Default.GetBytes(plainText);
             byte[] signContent = new byte[hmacDigest.Length + originalBytes.Length];
@@ -52,9 +51,7 @@ namespace qcloud.image
          */
         public static string Base64Encode(byte[] binaryData)
         {
-            var bs = Convert.ToBase64String(binaryData);
-            string encodedstr = bs;// Base64.getEncoder().encodeToString(binaryData);
-            return encodedstr;
+            return Convert.ToBase64String(binaryData);
         }
 
         /**
@@ -67,12 +64,6 @@ namespace qcloud.image
          */
         public static byte[] HmacSha1(byte[] binaryData, string key)
         {
-            //Mac mac = Mac.getInstance("HmacSHA1");
-            //SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "HmacSHA1");
-            //mac.init(secretKey);
-            //byte[] HmacSha1Digest = mac.doFinal(binaryData);
-            //return HmacSha1Digest;
-
             byte[] hashValue = null;
 
             using (HMACSHA1 hmac = new HMACSHA1(System.Text.Encoding.Default.GetBytes(key)))

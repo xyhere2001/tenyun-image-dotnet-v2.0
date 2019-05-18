@@ -72,12 +72,6 @@ namespace qcloud.image
 
                 return client.UploadString(url, json);
             }
-
-
-
-
-
-            return "";
         }
     }
 }
