@@ -61,6 +61,7 @@ namespace qcloud.image
             {
                 client.Headers.Add(RequestHeaderKey.Authorization, sign);
                 client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                client.Headers.Add("Host", this.config.getQCloudImageDomain());
 
                 var json = JsonConvert.SerializeObject(new
                 {
