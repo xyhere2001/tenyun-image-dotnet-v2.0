@@ -27,3 +27,29 @@
                 Console.WriteLine(e.Message);
             }
             Console.WriteLine("ocrDrivingLicence:" + ret);
+
+
+
+如果不想使用这套结构，想简单一点使用，只需要用里面生成sign的功能即可，其他调用自己写即可，如下
+
+            string ret = "";
+
+            using (WebClient client = new WebClient())
+            {
+                string sign = Sign.appSign(appid, secretId, secretKey);
+                client.Headers.Add("Authorization", sign);
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                client.Headers.Add("Host", "recognition.image.myqcloud.com");
+
+                var json = JsonConvert.SerializeObject(new
+                {
+                    appid = appid,
+                    type = 1,
+                    url = cosImageUrl
+                });
+
+
+                ret = client.UploadString(@"https://recognition.image.myqcloud.com/ocr/drivinglicence", json);
+            }
+
+            return JsonConvert.DeserializeObject<OcrDrivingLicenceResponse>(ret);
