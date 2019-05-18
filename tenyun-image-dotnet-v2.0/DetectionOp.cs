@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace qcloud.image
@@ -29,10 +31,10 @@ namespace qcloud.image
      */
         public string ocrDrivingLicence(OcrDrivingLicenceRequest request)
         {
-            //request.check_param();
+            request.check_param();
 
-            //String sign = Sign.appSign(cred, request.BucketName, this.config.getSignExpired());
-            //String url = getProtocol() + this.config.getQCloudImageDomain() + OCR_DRIVINGLICENCE;
+            String sign = Sign.appSign(cred, request.BucketName, this.config.getSignExpired());
+            String url = getProtocol() + this.config.getQCloudImageDomain() + ClientConfig.OCR_DRIVINGLICENCE;
 
             //HttpRequest httpRequest = new HttpRequest();
             //httpRequest.setMethod(HttpMethod.POST);
@@ -54,6 +56,27 @@ namespace qcloud.image
             //    httpRequest.addFile("image", request.getImage());
             //}
             //return httpClient.sendHttpRequest(httpRequest);
+
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add(RequestHeaderKey.Authorization, sign);
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+                var json = JsonConvert.SerializeObject(new
+                {
+                    appid = cred.getAppId(),
+                    type = request.Type,
+                    url = request.Url
+                });
+
+
+                return client.UploadString(url, json);
+            }
+
+
+
+
+
             return "";
         }
     }
